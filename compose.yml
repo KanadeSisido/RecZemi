@@ -1,0 +1,10 @@
+services:
+  rec-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: recbole-container
+    volumes:
+      - ./src:/app/recbole/src
+    working_dir: /app/recbole/src
+    command: bash -c "tail -f /dev/null"

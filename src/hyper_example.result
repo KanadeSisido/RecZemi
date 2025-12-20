@@ -1,0 +1,12 @@
+dropout_prob:0.5, hidden_size:128, learning_rate:0.005, num_layers:3
+Valid result:
+recall@10 : 0.1326    ndcg@10 : 0.0623    mrr@10 : 0.0413
+Test result:
+recall@10 : 0.122    ndcg@10 : 0.056    mrr@10 : 0.0365
+
+dropout_prob:0.4, hidden_size:128, learning_rate:0.0001, num_layers:2
+Valid result:
+recall@10 : 0.0339    ndcg@10 : 0.0161    mrr@10 : 0.0108
+Test result:
+recall@10 : 0.0424    ndcg@10 : 0.0194    mrr@10 : 0.0125
+

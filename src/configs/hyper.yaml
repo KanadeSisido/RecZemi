@@ -1,0 +1,6 @@
+metrics: ["Recall", "NDCG", "MRR"]
+valid_metric: "NDCG@10"
+valid_metric_bigger: True
+
+epochs: 5
+algo: "random"

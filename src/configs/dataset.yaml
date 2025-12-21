@@ -1,0 +1,13 @@
+USER_ID_FIELD: user_id
+ITEM_ID_FIELD: item_id
+TIME_FIELD: timestamp
+RATING_FIELD: rating
+
+load_col:
+  inter: [user_id, item_id, rating, timestamp]
+eval_args:
+  split: { "RS": [8, 1, 1] }
+  group_by: user
+  order: TO
+  mode: full
+MAX_ITEM_LIST_LENGTH: 50

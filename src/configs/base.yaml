@@ -1,5 +1,6 @@
 model: GRU4Rec
-dataset: ml-100k
+data_path: .
+dataset: beverages-1m
 checkpoint_dir: saved
 loss_type: CE
 train_neg_sample_args: ~

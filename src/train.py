@@ -13,7 +13,7 @@ def main():
     }
 
     config = Config(
-        config_file_list=["configs/config.yaml", "configs/base.yaml"],
+        config_file_list=["configs/config.yaml", "configs/base.yaml", "configs/dataset.yaml"],
         config_dict=best_params,
     )
 

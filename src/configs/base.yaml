@@ -4,3 +4,5 @@ dataset: beverages-1m
 checkpoint_dir: saved
 loss_type: CE
 train_neg_sample_args: ~
+use_gpu: False
+device: "cpu"

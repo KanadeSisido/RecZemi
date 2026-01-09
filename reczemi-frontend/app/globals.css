@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #F06060;
+  --color-primary-light: #F5A0A0;
+  --color-primary-dark: #E05050;
+  --color-background: #FDF5F5;
+  --color-surface: #FFFFFF;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* スクロールバーを非表示 */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  scrollbar-width: none;
+}
+
+
+.google-sans-700 {
+  font-family: "Google Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+  font-variation-settings:
+    "GRAD" 0;
+}
+
+.google-sans-400 {
+  font-family: "Google Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "GRAD" 0;
+}
+
+
+
+
+.noto-sans-jp-400 {
+  font-family: "Noto Sans JP", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.noto-sans-jp-700 {
+  font-family: "Noto Sans JP", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+}

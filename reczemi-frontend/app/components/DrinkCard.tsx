@@ -25,7 +25,7 @@ export default function DrinkCard({ drink, isSelected, onToggle }: DrinkCardProp
       layout
     >
       {/* ドリンク名 */}
-      <h3 className="text-sm font-medium text-gray-800 pr-8">{drink.name}</h3>
+      <h3 className="text-sm font-medium text-gray-800 pr-8">{drink.title}</h3>
 
       {/* 選択時のチェックマーク */}
       {isSelected && (

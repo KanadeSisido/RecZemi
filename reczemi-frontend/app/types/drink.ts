@@ -1,30 +1,16 @@
-// ドリンクの型定義
+// ドリンクの型定義（バックエンドのDBモデルに対応）
 export interface Drink {
-  id: string;
-  name: string;
-  category?: string;
-  description?: string;
-  imageUrl?: string;
-}
-
-// 検索レスポンスの型
-export interface SearchResponse {
-  drinks: Drink[];
-  query: string;
+  id: string;         // parent_asin (ASIN code)
+  title: string | null;  // Product title from Amazon
+  reviews?: string | null;  // Reviews (LONGTEXT)
 }
 
 // Drip リクエストの型
 export interface DripRequest {
-  drinkIds: string[];
+  history: string[];
 }
 
-// Drip レスポンスの型（Result画面用）
-export interface DripResponse {
-  success: boolean;
-  message: string;
-  recommendation?: {
-    name: string;
-    category: string;
-    description: string;
-  };
-}
+// APIレスポンス型のメモ:
+// GET /drinks/search?q=xxx → Drink[] を直接返す
+// POST /drinks/drip → Drink | null を返す
+

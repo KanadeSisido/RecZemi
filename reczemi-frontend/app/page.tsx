@@ -9,54 +9,46 @@ import CupButton from './components/CupButton';
 import DripButton from './components/DripButton';
 import BottomSheet from './components/BottomSheet';
 import ResultScreen from './components/ResultScreen';
-import { Drink, DripResponse } from './types/drink';
-import { searchDrinks, getRecommendedDrinks, dripDrinks } from './services/drinkApi';
+import { Drink } from './types/drink';
+import { searchDrinks, dripDrinks } from './services/drinkApi';
 
-// モックデータ（バックエンド未接続時のフォールバック）
-const MOCK_RECOMMENDED_DRINKS: Drink[] = [
-  { id: '1', name: 'いろはす' },
-  { id: '2', name: '午後の紅茶 ミルク' },
-  { id: '3', name: 'いろはす' },
-  { id: '4', name: 'モンスターエナジーゼロ' },
+// おすすめドリンク（ハードコード）- ユーザー提供のリスト
+const RECOMMENDED_DRINKS: Drink[] = [
+  { id: 'B07L1Q6KBG', title: 'じっくりコトコト' },
+  { id: 'B0026IAWMU', title: 'いろはす' },
+  { id: 'B07BX4L6P3', title: '伊右衛門　ほうじ茶' },
+  { id: 'B07T94HSTM', title: '伊右衛門　煎茶' },
+  { id: 'B076YVRKJZ', title: 'なっちゃん　りんご' },
+  { id: 'B088JB2N41', title: 'デカビタ' },
+  { id: 'B08L9R58WD', title: 'CC Lemon' },
+  { id: 'B00NU606FK', title: 'Mountain Dew' },
+  { id: 'B0C5LZBCYC', title: 'PEPSI' },
+  { id: 'B009NAEMG6', title: 'BOSS Black' },
+  { id: 'B08L4KNBV6', title: 'BOSS レインボーマウンテンブレンドコーヒー' },
+  { id: 'B0828JC5JS', title: 'Craft BOSS ブラックコーヒー' },
+  { id: 'B00HEZ4I0W', title: '午後の紅茶ミルクティー' },
+  { id: 'B07DD7JC21', title: '午後の紅茶レモンティー' },
+  { id: 'B00VFLM17I', title: 'ソルティライチ' },
+  { id: 'B00DUXOXAM', title: 'minute maid Orange' },
+  { id: 'B0C6911Q6L', title: 'dr pepper' },
+  { id: 'B0C1T5P3BY', title: 'コカ・コーラ' },
+  { id: 'B0089Y6ZSU', title: '紅茶花伝　ミルクティー' },
+  { id: 'B0C83YWDLJ', title: 'monster energy green' },
+  { id: 'B019AKA5WS', title: 'Monster energy zero ultra' },
+  { id: 'B075HM9HGH', title: 'monster energy mango loco' },
+  { id: 'B017UIQOF4', title: 'monster energy pipeline punch' },
 ];
-
-const MOCK_SEARCH_RESULTS: Record<string, Drink[]> = {
-  cola: [
-    { id: '5', name: 'Coca-Cola Zero' },
-    { id: '6', name: 'Coca-cola' },
-    { id: '7', name: 'PEPSI Cola' },
-    { id: '8', name: 'Coca-cola lemon' },
-  ],
-  tea: [
-    { id: '2', name: '午後の紅茶 ミルク' },
-    { id: '9', name: '伊右衛門' },
-    { id: '10', name: '綾鷹' },
-  ],
-};
-
-// モックのDripResponseデータ
-const MOCK_DRIP_RESPONSE: DripResponse = {
-  success: true,
-  message: 'Recommendation found!',
-  recommendation: {
-    name: 'Monster Energy Mango Loco',
-    category: 'Energy',
-    description: 'フルーツ感が強い、ジュースみたいな\nエナジードリンク。さっぱりとした風味がおすすめ！',
-  },
-};
 
 export default function Home() {
   // State
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('Loading...');
   const [searchQuery, setSearchQuery] = useState('');
-  const [recommendedDrinks, setRecommendedDrinks] = useState<Drink[]>(MOCK_RECOMMENDED_DRINKS);
   const [searchResults, setSearchResults] = useState<Drink[]>([]);
   const [selectedDrinks, setSelectedDrinks] = useState<Drink[]>([]);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-  const [useMockData, setUseMockData] = useState(true);
   const [showResult, setShowResult] = useState(false);
-  const [resultData, setResultData] = useState<DripResponse['recommendation'] | null>(null);
+  const [resultData, setResultData] = useState<Drink | null>(null);
   const [showSplash, setShowSplash] = useState(true);
 
   // スプラッシュスクリーン制御
@@ -66,24 +58,8 @@ export default function Home() {
     }, 2500);
     return () => clearTimeout(timer);
   }, []);
-  // おすすめドリンクを取得
-  useEffect(() => {
-    const fetchRecommendations = async () => {
-      try {
-        const drinks = await getRecommendedDrinks();
-        setRecommendedDrinks(drinks);
-        setUseMockData(false);
-      } catch {
-        // バックエンド未接続時はモックデータを使用
-        console.log('Using mock data for recommendations');
-        setUseMockData(true);
-      }
-    };
 
-    fetchRecommendations();
-  }, []);
-
-  // 検索処理
+  // 検索処理（バックエンドに問い合わせ）
   const handleSearch = useCallback(async (query: string) => {
     setSearchQuery(query);
 
@@ -92,33 +68,14 @@ export default function Home() {
       return;
     }
 
-    if (useMockData) {
-      // モックデータから検索
-      const lowerQuery = query.toLowerCase();
-      const results = Object.entries(MOCK_SEARCH_RESULTS)
-        .filter(([key]) => key.includes(lowerQuery) || lowerQuery.includes(key))
-        .flatMap(([, drinks]) => drinks);
-
-      if (results.length === 0) {
-        // 部分一致で検索
-        const allMockDrinks = [...MOCK_RECOMMENDED_DRINKS, ...Object.values(MOCK_SEARCH_RESULTS).flat()];
-        setSearchResults(
-          allMockDrinks.filter(drink =>
-            drink.name.toLowerCase().includes(lowerQuery)
-          )
-        );
-      } else {
-        setSearchResults(results);
-      }
-    } else {
-      try {
-        const response = await searchDrinks(query);
-        setSearchResults(response.drinks);
-      } catch (error) {
-        console.error('Search failed:', error);
-      }
+    try {
+      const drinks = await searchDrinks(query);
+      setSearchResults(drinks);
+    } catch (error) {
+      console.error('Search failed:', error);
+      setSearchResults([]);
     }
-  }, [useMockData]);
+  }, []);
 
   // ドリンク選択/解除
   const handleToggleDrink = useCallback((drink: Drink) => {
@@ -142,7 +99,7 @@ export default function Home() {
     setSelectedDrinks([]);
   }, []);
 
-  // Drip処理
+  // Drip処理（バックエンドに問い合わせ）
   const handleDrip = useCallback(async () => {
     if (selectedDrinks.length === 0) return;
 
@@ -151,23 +108,14 @@ export default function Home() {
 
     try {
       const drinkIds = selectedDrinks.map(d => d.id);
-
-      let response: DripResponse;
-
-      if (useMockData) {
-        // モック: 3秒待機
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        response = MOCK_DRIP_RESPONSE;
-      } else {
-        response = await dripDrinks(drinkIds);
-      }
+      const response = await dripDrinks(drinkIds);
 
       // ローディング終了
       setIsLoading(false);
 
       // Result画面を表示
-      if (response.recommendation) {
-        setResultData(response.recommendation);
+      if (response) {
+        setResultData(response);
         setShowResult(true);
       }
 
@@ -177,12 +125,12 @@ export default function Home() {
       console.error('Drip failed:', error);
       setIsLoading(false);
     }
-  }, [selectedDrinks, useMockData]);
+  }, [selectedDrinks]);
 
   // シェア機能
   const handleShare = useCallback(() => {
     if (resultData) {
-      const text = `私のおすすめドリンクは「${resultData.name}」です！ #DrinkIt`;
+      const text = `私のおすすめドリンクは「${resultData.title}」です！ #DrinkIt`;
       const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
       window.open(url, '_blank');
     }
@@ -195,7 +143,7 @@ export default function Home() {
   }, []);
 
   // 表示するドリンクリスト
-  const displayDrinks = searchQuery ? searchResults : recommendedDrinks;
+  const displayDrinks = searchQuery ? searchResults : RECOMMENDED_DRINKS;
   const sectionTitle = searchQuery
     ? `検索結果: "${searchQuery}"`
     : 'おすすめ';
@@ -216,9 +164,8 @@ export default function Home() {
       <AnimatePresence>
         {showResult && resultData && (
           <ResultScreen
-            drinkName={resultData.name}
-            category={resultData.category}
-            description={resultData.description}
+            drinkName={resultData.title || 'Unknown'}
+            category="Beverage"
             onShare={handleShare}
             onClose={handleCloseResult}
           />
